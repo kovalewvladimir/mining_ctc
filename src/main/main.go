@@ -5,7 +5,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"gopkg.in/telegram-bot-api.v4"
 )
+
+var buttons = []tgbotapi.KeyboardButton{
+	tgbotapi.KeyboardButton{Text: "Balance"},
+}
 
 func getBalanceNiceHash(url string) string {
 	c := http.Client{}
@@ -25,7 +31,43 @@ func main() {
 	keyAPINiceHash := os.Getenv("KEY_API_NICEHASH")
 	urlAPINiceHashBalance := "https://api.nicehash.com/api?method=balance&id=" + idAPINiceHash + "&key=" + keyAPINiceHash
 
-	balance := getBalanceNiceHash(urlAPINiceHashBalance)
+	const WebhookURL = "https://git.heroku.com/mining-ctc-bot.gi"
+	port := os.Getenv("PORT")
+	telegramBotToken := os.Getenv("TELEGRAM_BOT_TOKEN")
+	bot, err := tgbotapi.NewBotAPI(telegramBotToken)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	log.Printf(balance)
+	bot.Debug = true
+
+	log.Printf("Authorized on account %s", bot.Self.UserName)
+
+	_, err = bot.SetWebhook(tgbotapi.NewWebhook(WebhookURL))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	update := bot.ListenForWebhook("/")
+	go http.ListenAndServe(":"+port, nil)
+
+	for update := range update {
+		var message tgbotapi.MessageConfig
+
+		log.Println("received text: ", update.Message.Text)
+
+		switch update.Message.Text {
+		case "Balance":
+			balance := getBalanceNiceHash(urlAPINiceHashBalance)
+			log.Printf(balance)
+			message = tgbotapi.NewMessage(update.Message.Chat.ID, balance)
+		default:
+			message = tgbotapi.NewMessage(update.Message.Chat.ID, `test`)
+		}
+
+		// В ответном сообщении просим показать клавиатуру
+		message.ReplyMarkup = tgbotapi.NewReplyKeyboard(buttons)
+
+		bot.Send(message)
+	}
 }
