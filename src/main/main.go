@@ -31,7 +31,7 @@ func main() {
 	keyAPINiceHash := os.Getenv("KEY_API_NICEHASH")
 	urlAPINiceHashBalance := "https://api.nicehash.com/api?method=balance&id=" + idAPINiceHash + "&key=" + keyAPINiceHash
 
-	const WebhookURL = "https://git.heroku.com/mining-ctc-bot.gi"
+	const WebhookURL = "https://mining-ctc-bot.herokuapp.com/"
 	port := os.Getenv("PORT")
 	telegramBotToken := os.Getenv("TELEGRAM_BOT_TOKEN")
 	bot, err := tgbotapi.NewBotAPI(telegramBotToken)
