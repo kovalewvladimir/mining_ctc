@@ -13,6 +13,8 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
+# pkg
+pkg/*
+
 # Vendoring
-vendor/src/*
 vendor/pkg/*
