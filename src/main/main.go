@@ -9,8 +9,16 @@ import (
 	"gopkg.in/telegram-bot-api.v4"
 )
 
+var idAPINiceHash = os.Getenv("ID_API_NICEHASH")
+var keyAPINiceHash = os.Getenv("KEY_API_NICEHASH")
+var btcAddress = os.Getenv("BTC_ADDRESS")
+
+var urlAPINiceHashBalance = "https://api.nicehash.com/api?method=balance&id=" + idAPINiceHash + "&key=" + keyAPINiceHash
+var urlAPINiceHashProvider = "https://api.nicehash.com/api?method=stats.provider&addr=" + btcAddress
+
 var buttons = []tgbotapi.KeyboardButton{
 	tgbotapi.KeyboardButton{Text: "Balance"},
+	tgbotapi.KeyboardButton{Text: "Provider"},
 }
 
 func getBalanceNiceHash(url string) string {
@@ -26,11 +34,20 @@ func getBalanceNiceHash(url string) string {
 	return string(body)
 }
 
-func main() {
-	idAPINiceHash := os.Getenv("ID_API_NICEHASH")
-	keyAPINiceHash := os.Getenv("KEY_API_NICEHASH")
-	urlAPINiceHashBalance := "https://api.nicehash.com/api?method=balance&id=" + idAPINiceHash + "&key=" + keyAPINiceHash
+func getProviderNiceHash(url string) string {
+	c := http.Client{}
+	resp, err := c.Get(url)
+	if err != nil {
+		return "API NICEHASH ERROR"
+	}
 
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	return string(body)
+}
+
+func main() {
 	const WebhookURL = "https://mining-ctc-bot.herokuapp.com/"
 	port := os.Getenv("PORT")
 	telegramBotToken := os.Getenv("TELEGRAM_BOT_TOKEN")
@@ -61,6 +78,10 @@ func main() {
 			balance := getBalanceNiceHash(urlAPINiceHashBalance)
 			log.Printf(balance)
 			message = tgbotapi.NewMessage(update.Message.Chat.ID, balance)
+		case "Provider":
+			provider := getProviderNiceHash(urlAPINiceHashProvider)
+			log.Printf(provider)
+			message = tgbotapi.NewMessage(update.Message.Chat.ID, provider)
 		default:
 			message = tgbotapi.NewMessage(update.Message.Chat.ID, `test`)
 		}
