@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -19,32 +18,6 @@ var urlAPINiceHashProvider = "https://api.nicehash.com/api?method=stats.provider
 var buttons = []tgbotapi.KeyboardButton{
 	tgbotapi.KeyboardButton{Text: "Balance"},
 	tgbotapi.KeyboardButton{Text: "Provider"},
-}
-
-func getBalanceNiceHash(url string) string {
-	c := http.Client{}
-	resp, err := c.Get(url)
-	if err != nil {
-		return "API NICEHASH ERROR"
-	}
-
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	return string(body)
-}
-
-func getProviderNiceHash(url string) string {
-	c := http.Client{}
-	resp, err := c.Get(url)
-	if err != nil {
-		return "API NICEHASH ERROR"
-	}
-
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	return string(body)
 }
 
 func main() {
@@ -75,15 +48,22 @@ func main() {
 
 		switch update.Message.Text {
 		case "Balance":
-			balance := getBalanceNiceHash(urlAPINiceHashBalance)
+			/*balance := getBalanceNiceHash(urlAPINiceHashBalance)
 			log.Printf(balance)
-			message = tgbotapi.NewMessage(update.Message.Chat.ID, balance)
+			message = tgbotapi.NewMessage(update.Message.Chat.ID, balance)*/
 		case "Provider":
-			provider := getProviderNiceHash(urlAPINiceHashProvider)
-			log.Printf(provider)
-			message = tgbotapi.NewMessage(update.Message.Chat.ID, provider)
+			var messageText string
+
+			provider := Provider{}
+			err := provider.getOfNiceHash(urlAPINiceHashProvider)
+			if err != nil {
+				log.Print("ERROR", err)
+				messageText = "ERROR"
+			}
+			messageText += provider.getTelegramMessage()
+			message = tgbotapi.NewMessage(update.Message.Chat.ID, messageText)
 		default:
-			message = tgbotapi.NewMessage(update.Message.Chat.ID, `test`)
+			message = tgbotapi.NewMessage(update.Message.Chat.ID, `default message`)
 		}
 
 		// В ответном сообщении просим показать клавиатуру
