@@ -57,20 +57,20 @@ func main() {
 			err := provider.getOfNiceHash(urlAPINiceHashProvider)
 			if err != nil {
 				log.Print("ERROR provider", err)
-				messageText = "**ERROR provider**"
+				messageText = "*ERROR provider*"
 			}
 
 			btcToRub, err := getBTCToRUB()
 			if err != nil {
 				log.Print("ERROR converter", err)
-				messageText = "**ERROR converter**"
+				messageText = "*ERROR converter*"
 			}
 
 			balance := provider.getPaidBalance()
 
-			messageText += "Курс: 1 BTC = **%.2f**\n"
-			messageText += "Выплаченный баланс: **%.9f** BTC\n"
-			messageText += "Выплаченный баланс: **%.2f** RUB\n"
+			messageText += "Курс: 1 BTC = *%.2f*\n"
+			messageText += "Выплаченный баланс: *%.9f* BTC\n"
+			messageText += "Выплаченный баланс: *%.2f* RUB\n"
 			messageText = fmt.Sprintf(messageText, btcToRub, balance, balance*btcToRub)
 
 			message = tgbotapi.NewMessage(update.Message.Chat.ID, messageText)
@@ -81,20 +81,20 @@ func main() {
 			err := provider.getOfNiceHash(urlAPINiceHashProvider)
 			if err != nil {
 				log.Print("ERROR provider", err)
-				messageText = "**ERROR provider**"
+				messageText = "*ERROR provider*"
 			}
 
 			btcToRub, err := getBTCToRUB()
 			if err != nil {
 				log.Print("ERROR converter", err)
-				messageText = "**ERROR converter**"
+				messageText = "*ERROR converter*"
 			}
 
 			balance := provider.getUnpaidBalance()
 
-			messageText += "Курс: 1 BTC = **%.2f**\n"
-			messageText += "Невыплаченный баланс: **%.9f** BTC\n"
-			messageText += "Невыплаченный баланс: **%.2f** RUB\n"
+			messageText += "Курс: 1 BTC = *%.2f*\n"
+			messageText += "Невыплаченный баланс: *%.9f* BTC\n"
+			messageText += "Невыплаченный баланс: *%.2f* RUB\n"
 			messageText = fmt.Sprintf(messageText, btcToRub, balance, balance*btcToRub)
 
 			message = tgbotapi.NewMessage(update.Message.Chat.ID, messageText)
@@ -105,25 +105,25 @@ func main() {
 			err := provider.getOfNiceHash(urlAPINiceHashProvider)
 			if err != nil {
 				log.Print("ERROR provider", err)
-				messageText = "**ERROR provider**"
+				messageText = "*ERROR provider*"
 			}
 
 			btcToRub, err := getBTCToRUB()
 			if err != nil {
 				log.Print("ERROR converter", err)
-				messageText = "**ERROR converter**"
+				messageText = "*ERROR converter*"
 			}
 
 			speed := provider.getSpeedMining()
 
-			messageText += "Курс: 1 BTC = **%.2f**\n"
-			messageText += "Скорость майнинга: **%.9f** BTC/день\n"
-			messageText += "Скорость майнинга: **%.2f** RUB/день\n"
+			messageText += "Курс: 1 BTC = *%.2f*\n"
+			messageText += "Скорость майнинга: *%.9f* BTC/день\n"
+			messageText += "Скорость майнинга: *%.2f* RUB/день\n"
 			messageText = fmt.Sprintf(messageText, btcToRub, speed, speed*btcToRub)
 
 			message = tgbotapi.NewMessage(update.Message.Chat.ID, messageText)
 		default:
-			message = tgbotapi.NewMessage(update.Message.Chat.ID, `**Неверный запрос**`)
+			message = tgbotapi.NewMessage(update.Message.Chat.ID, `*Неверный запрос*`)
 		}
 
 		message.ParseMode = "Markdown"
