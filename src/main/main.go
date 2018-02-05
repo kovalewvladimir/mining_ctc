@@ -20,6 +20,7 @@ var buttons = []tgbotapi.KeyboardButton{
 	tgbotapi.KeyboardButton{Text: "Выплаченный баланс"},
 	tgbotapi.KeyboardButton{Text: "Невыплаченный баланс"},
 	tgbotapi.KeyboardButton{Text: "Скорость майнинга"},
+	tgbotapi.KeyboardButton{Text: "Шаха?"},
 }
 
 func main() {
@@ -122,6 +123,38 @@ func main() {
 			messageText = fmt.Sprintf(messageText, btcToRub, speed, speed*btcToRub)
 
 			message = tgbotapi.NewMessage(update.Message.Chat.ID, messageText)
+		case "Шаха?":
+			var messageText string
+
+			provider := Provider{}
+			err := provider.getOfNiceHash(urlAPINiceHashProvider)
+			if err != nil {
+				log.Print("ERROR provider", err)
+				messageText = "*ERROR provider*"
+			}
+
+			btcToRub, err := getBTCToRUB()
+			if err != nil {
+				log.Print("ERROR converter", err)
+				messageText = "*ERROR converter*"
+			}
+
+			balance := provider.getPaidBalance() + provider.getUnpaidBalance()
+			speed := provider.getSpeedMining()
+			var priceShaha float64 = 50000
+			days := (priceShaha - balance*btcToRub) / (speed * btcToRub)
+
+			messageText += "Курс: 1 BTC = *%.2f*\n"
+			messageText += "Итого намайнили: *%.9f* BTC\n"
+			messageText += "Итого намайнили = *%.2f* RUB\n"
+			messageText += "Скорость майнинга: *%.9f* BTC/день\n"
+			messageText += "Скорость майнинга: *%.2f* RUB/день\n\n"
+			messageText += "Шаха будет наша через: *%.2f* дней"
+
+			messageText = fmt.Sprintf(messageText, btcToRub, balance, balance*btcToRub, speed, speed*btcToRub, days)
+
+			message = tgbotapi.NewMessage(update.Message.Chat.ID, messageText)
+
 		default:
 			message = tgbotapi.NewMessage(update.Message.Chat.ID, `*Неверный запрос*`)
 		}
