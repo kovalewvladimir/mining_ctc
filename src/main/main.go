@@ -126,6 +126,7 @@ func main() {
 			message = tgbotapi.NewMessage(update.Message.Chat.ID, `**Неверный запрос**`)
 		}
 
+		message.ParseMode = "Markdown"
 		// В ответном сообщении просим показать клавиатуру
 		message.ReplyMarkup = tgbotapi.NewReplyKeyboard(buttons)
 
